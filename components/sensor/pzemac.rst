@@ -18,13 +18,24 @@ The ``pzemac`` sensor platform allows you to use PZEM-004T V3 energy monitors
 `datasheet <https://innovatorsguru.com/wp-content/uploads/2019/06/PZEM-004T-V3.0-Datasheet-User-Manual.pdf>`__)
 with ESPHome.
 
-The sensor can be connected in various configurations - please see the `manufacturer's website <https://innovatorsguru.com/pzem-004t-v3/>`__
+Hardware:
+---------
+
+The sensor may comes with a plastic encolsure, with or without a current transformer, according to the seller. Thus it can be connected in various configurations - please see the `manufacturer's website <https://innovatorsguru.com/pzem-004t-v3/>`__
 for more information.
+This is the wiring configuration with a current transformer.
+
+.. figure:: images/pzem004t v3 wiring.png
+    :align: center
+    :width: 80.0%
+
+    PZEM-004T Version 3 wiring.
 
 .. warning::
 
     Please note that metering chip inside of PZEM module is powered from AC side and it has to be on during startup of ESPHome device, othervise measure results won't be visible. 
 
+    The serial output of the sensor comes in a 5V level. A logic level converter to 3.3V must be used according to the ESP board used.
 
 .. figure:: images/pzem-ac.png
     :align: center
@@ -53,6 +64,7 @@ to some pins on your board and the baud rate set to 9600.
 
     sensor:
       - platform: pzemac
+        id: pzemac_1
         current:
           name: "PZEM-004T V3 Current"
         voltage:
@@ -94,12 +106,15 @@ Configuration variables:
 ******************************
 
 This action resets the total energy value of the pzemac device with the given ID when executed.
+The code below adds a virtual button which sends a reset order
 
 .. code-block:: yaml
 
-    on_...:
-      then:
-        - pzemac.reset_energy: pzemac_1
+    button:
+      - platform: template  
+        name: "Reset Energy"
+        on_press:
+            - pzemac.reset_energy: pzemac_1
 
 Changing the address of a PZEM-004T:
 ------------------------------------
